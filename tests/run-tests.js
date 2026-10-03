@@ -4,6 +4,7 @@
 
 import { runMathTests } from './math.test.js';
 import { runStateTests } from './state.test.js';
+import { runThemeAndSettingsTests } from './theme.test.js';
 
 let passed = 0;
 let failed = 0;
@@ -23,10 +24,12 @@ console.log('GitHub Game Off 2026 Headless Test Runner');
 console.log('=============================================\n');
 
 try {
-  console.log('[SUITE 1/2] Running Vector2D & Collision Math Tests...');
+  console.log('[SUITE 1/3] Running Vector2D & Collision Math Tests...');
   runMathTests(assert);
-  console.log('\n[SUITE 2/2] Running Game State & Scoring Tests...');
+  console.log('\n[SUITE 2/3] Running Game State & Scoring Tests...');
   runStateTests(assert);
+  console.log('\n[SUITE 3/3] Running Theme Adapter & Accessibility Tests...');
+  runThemeAndSettingsTests(assert);
 } catch (err) {
   console.error('\nFatal Exception during test execution:', err);
   process.exit(1);
@@ -39,6 +42,6 @@ console.log('=============================================\n');
 if (failed > 0) {
   process.exit(1);
 } else {
-  console.log('>>> ALL VERIFICATION TESTS GREEN <<<\n');
+  console.log('>>> ALL PRE-JAM VERIFICATION TESTS GREEN <<<\n');
   process.exit(0);
 }

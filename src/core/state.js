@@ -1,11 +1,14 @@
 /**
- * Game State Machine and Scoring Engine
+ * Game State Machine, Scoring, and Accessibility Settings
  */
+
+import { globalThemeAdapter } from '../theme/themeAdapter.js';
 
 export const GameStates = {
   TITLE: 'TITLE',
   PLAYING: 'PLAYING',
   PAUSED: 'PAUSED',
+  SETTINGS: 'SETTINGS',
   GAME_OVER: 'GAME_OVER'
 };
 
@@ -34,6 +37,12 @@ export class GameState {
     // Stats telemetry
     this.enemiesDestroyed = 0;
     this.pulsesFired = 0;
+
+    // Accessibility & User Preferences
+    this.settings = this.loadSettings();
+
+    // Theme hook reference
+    this.theme = globalThemeAdapter;
   }
 
   loadHighScore() {
@@ -42,7 +51,7 @@ export class GameState {
         return parseInt(localStorage.getItem('gh_game_off_2026_highscore') || '0', 10);
       }
     } catch {
-      // LocalStorage unavailable in sandbox
+      // Sandboxed iframe fallback
     }
     return 0;
   }
@@ -55,8 +64,36 @@ export class GameState {
           localStorage.setItem('gh_game_off_2026_highscore', this.highScore.toString());
         }
       } catch {
-        // Ignored
+        // Sandboxed fallback
       }
+    }
+  }
+
+  loadSettings() {
+    const defaults = {
+      masterVolume: 0.7,
+      screenShake: 1.0, // 0.0 to 1.0 multiplier
+      highContrast: false,
+      reducedMotion: false
+    };
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = localStorage.getItem('gh_game_off_2026_settings');
+        if (saved) return { ...defaults, ...JSON.parse(saved) };
+      }
+    } catch {
+      // Ignored
+    }
+    return defaults;
+  }
+
+  saveSettings() {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('gh_game_off_2026_settings', JSON.stringify(this.settings));
+      }
+    } catch {
+      // Ignored
     }
   }
 
@@ -92,9 +129,10 @@ export class GameState {
       this.energy = Math.min(this.maxEnergy, this.energy + this.energyRechargeRate * dt);
     }
 
-    // Combo decay
+    // Combo decay with theme modifier
     if (this.comboTimer > 0) {
-      this.comboTimer -= dt;
+      const decayRate = dt * (this.theme.modifiers.comboDecayMultiplier || 1.0);
+      this.comboTimer -= decayRate;
       if (this.comboTimer <= 0) {
         this.combo = 1;
       }
@@ -128,7 +166,6 @@ export class GameState {
   addGraze(points = 15) {
     this.grazeCount++;
     this.score += points * this.combo;
-    // Grazing rewards immediate energy recharge
     this.energy = Math.min(this.maxEnergy, this.energy + 8);
     this.comboTimer = Math.min(this.maxComboTimer, this.comboTimer + 0.4);
     this.saveHighScore();
@@ -136,7 +173,7 @@ export class GameState {
 
   takeDamage(amount) {
     this.shield = Math.max(0, this.shield - amount);
-    this.combo = 1; // Break combo on hit
+    this.combo = 1;
     this.comboTimer = 0;
     if (this.shield <= 0) {
       this.currentState = GameStates.GAME_OVER;
