@@ -1,0 +1,27 @@
+{
+  "name": "game-off-2026-championship",
+  "version": "0.1.0",
+  "description": "GitHub Game Off 2026 Championship Entry - High-Performance WebGL/Canvas2D Arcade Experience",
+  "type": "module",
+  "main": "src/game.js",
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "test": "node tests/run-tests.js",
+    "package": "node scripts/package-itch.js"
+  },
+  "keywords": [
+    "github-game-off",
+    "game-off-2026",
+    "game-jam",
+    "itch-io",
+    "html5-game",
+    "canvas2d",
+    "web-audio",
+    "zzfx"
+  ],
+  "author": "Victor M (vyva360-byte)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

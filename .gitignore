@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Builds & Distribution
+dist/
+build/
+*.zip
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.log
+
+# Environment & Secrets
+.env
+.env.*
+*.pem
+*.key
