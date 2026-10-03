@@ -14,7 +14,7 @@
 ## 🎮 Playable Jam Experience
 
 - **Play In Browser:** Uploaded directly to itch.io (`dist/game-off-2026.zip`).
-- **Source Code Repository:** [GitHub Repository (vyva360-byte)](https://github.com/vyva360-byte)
+- **Source Code Repository:** [GitHub Repository: vyva360-byte/game-off-2026](https://github.com/vyva360-byte/game-off-2026)
 - **Local Dev Server:** `npm start` -> visit `http://localhost:3000`
 
 ---
