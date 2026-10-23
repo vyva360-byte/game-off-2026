@@ -6,7 +6,7 @@
   "main": "src/game.js",
   "scripts": {
     "start": "node scripts/serve.js",
-    "test": "node tests/run-tests.js",
+    "test": "node tests/run-tests.js && node --test tests/*.node.test.js",
     "package": "node scripts/package-itch.js"
   },
   "keywords": [
