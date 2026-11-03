@@ -1,0 +1,5 @@
+steps:
+  - label: ":wave: Pilot build"
+    command: |
+      echo "Entire + Buildkite pilot"
+      ls -la
