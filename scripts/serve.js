@@ -6,6 +6,7 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveAssetPath } from './asset-path.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,19 +28,13 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
-  let reqPath = decodeURI(req.url.split('?')[0]);
-  if (reqPath === '/' || reqPath === '') {
-    reqPath = '/index.html';
-  }
-
-  const filePath = path.join(ROOT_DIR, reqPath);
-
-  // Security: prevent directory traversal
-  if (!filePath.startsWith(ROOT_DIR)) {
-    res.writeHead(403);
-    res.end('403 Forbidden');
+  const resolved = resolveAssetPath(ROOT_DIR, req.url);
+  if (resolved.status !== 200) {
+    res.writeHead(resolved.status);
+    res.end(resolved.status === 400 ? '400 Bad Request' : '403 Forbidden');
     return;
   }
+  const { filePath, reqPath } = resolved;
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
@@ -58,6 +53,7 @@ const server = http.createServer((req, res) => {
     });
 
     const stream = fs.createReadStream(filePath);
+    stream.on('error', () => res.destroy());
     stream.pipe(res);
   });
 });
